@@ -356,6 +356,7 @@ skill/
 │       ├── windsurf.md
 │       ├── trae.md
 │       ├── codex.md
+│       ├── antigravity.md
 │       └── system-prompt.md
 ├── 02-spec/
 ├── 03-handoff/
