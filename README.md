@@ -88,9 +88,9 @@ design → spec → handoff → implement → verify → deliver
 
 ---
 
-## 支持 7 种 AI 工具
+## 支持 8 种 AI 工具
 
-每个 skill 包含 7 种工具的独立 adapter，格式完全对应各工具规范：
+每个 skill 包含 8 种工具的独立 adapter，格式完全对应各工具规范：
 
 | 工具 | 文件 | 安装位置 | 触发方式 |
 |------|------|----------|----------|
@@ -100,6 +100,7 @@ design → spec → handoff → implement → verify → deliver
 | Cursor | `cursor.mdc` | `.cursor/rules/` | 对话中描述需求 |
 | Windsurf | `windsurf.md` | `.windsurf/rules/` | 对话中描述需求 |
 | Trae | `trae.md` | `.trae/rules/` | 对话中描述需求 |
+| Google Antigravity | `antigravity.md` | 项目根目录 `GEMINI.md` | 对话中描述需求 |
 | 任何 AI 工具 | `system-prompt.md` | 粘贴到 system prompt | 对话中描述需求 |
 
 ---
@@ -207,6 +208,17 @@ Trae 同样建议用自然语言触发：
 - `用 verify 验收`
 - `进入 deliver 出交付报告`
 
+### Google Antigravity
+
+Antigravity 的规则文件写入项目根目录的 `GEMINI.md`，安装后直接用自然语言触发：
+
+- `用 design 生成 DESIGN.md`
+- `进入 spec 生成 UI_SPEC.md`
+- `用 handoff 生成 Handoff.md`
+- `进入 implement 改代码`
+- `用 verify 验收`
+- `进入 deliver 出交付报告`
+
 ### 通用方式（任何 AI 工具）
 
 如果某个工具不支持 rules / commands / slash command，最简单的方法是：
@@ -292,6 +304,19 @@ cp 03-handoff/adapters/trae.md .trae/rules/handoff.md
 cp 04-implement/adapters/trae.md .trae/rules/implement.md
 cp 05-verify/adapters/trae.md .trae/rules/verify.md
 cp 06-deliver/adapters/trae.md .trae/rules/deliver.md
+```
+
+### Google Antigravity
+
+将所有 skill 的内容合并追加到项目根目录的 `GEMINI.md`：
+
+```bash
+cat 01-design/adapters/antigravity.md >> GEMINI.md
+cat 02-spec/adapters/antigravity.md >> GEMINI.md
+cat 03-handoff/adapters/antigravity.md >> GEMINI.md
+cat 04-implement/adapters/antigravity.md >> GEMINI.md
+cat 05-verify/adapters/antigravity.md >> GEMINI.md
+cat 06-deliver/adapters/antigravity.md >> GEMINI.md
 ```
 
 ### 通用（任何 AI 工具）

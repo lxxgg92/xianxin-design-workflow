@@ -1,0 +1,177 @@
+<!-- antigravity-rule: design -->
+
+# design
+
+用于新项目初始化或更新已有项目的设计规范。当用户提供 Figma 链接、参考图或设计稿，且任务涉及新项目初始化、页面交付或设计规范落地时执行此 skill。负责项目级设计规则；单页面结构拆解应进入 spec。不适用于临时修改、小 bug 修复、零碎问题等非交付类任务。
+
+## 前置判断
+
+触发后按以下顺序判断当前状态，再决定执行路径：
+
+**第一步：确认项目路径**
+- 如果上下文中没有明确项目路径，先向用户确认
+
+**第二步：检查项目内文件分层**
+- **基础文件**：
+  - DESIGN.md
+  - UI_SPEC.md 或 UI_SPEC_*.md
+  - Handoff.md
+- **最终交付产物**：
+  - delivery-report.md
+
+**第三步：根据检查结果分流**
+
+- **新项目**（基础文件均不存在）：
+  - 检查用户是否已提供足够信息，缺少时一次性整理所有缺失项后统一反馈，不逐条追问
+  - 新建 DESIGN.md 时至少需要确认：产品类型、目标用户、品牌气质、主色、是否有参考图或 Figma 链接、端类型（B 端 / C 端 / 移动端 / Web 等）、是否有已有组件库或 UI 框架
+  - 信息齐全后生成 DESIGN.md，再引导进入 → spec
+
+- **更新项目**（DESIGN.md 已存在）：
+  - 先读取现有 DESIGN.md，不覆盖原有规则
+  - 检查是否存在 UI_SPEC.md（或命名为 UI_SPEC_*.md 的任何页面规格文件）、Handoff.md
+  - 如果缺少其中任意基础文件：一次性告知用户缺了哪些、各文件用于什么阶段、是否需要重新生成
+  - 如果缺少 delivery-report.md：仅说明项目尚未进入最终交付阶段，不视为异常
+  - 如果 DESIGN.md 与本轮需求冲突：先指出冲突，再给出建议，不直接覆盖
+
+- **部分文件缺失**（有些存在有些不存在）：
+  - 一次性列出所有缺失文件，说明各文件用途，询问是补全还是重新开始
+
+## 输入
+
+**新建 DESIGN.md 时：**
+- 品牌信息（品牌色、气质、关键词）
+- 页面参考图、原型或 Figma 链接
+- 产品类型、端类型（Web / 移动 / PC 等）
+- 已有组件库信息（如有）
+
+**更新已有 DESIGN.md 时：**
+- 现有 DESIGN.md 文件
+- 变更需求说明（新增 token、修改规则、扩展组件等）
+- 当前项目路径下已有的 UI_SPEC.md / Handoff.md / delivery-report.md（如有）
+
+## 输出
+- DESIGN.md 文件（YAML 前置数据 + Markdown 正文）
+- 对用户的阶段性说明：
+  - 当前判断是新项目还是更新项目
+  - 当前缺少哪些文件或信息
+  - 下一步应进入哪个 skill（通常是 → spec）
+
+## 暂停点
+- DESIGN.md 生成或更新完成后，必须暂停，告诉用户：
+  - 当前设计规范是否已建立完成
+  - 是否还有缺失文件需要补齐
+  - 下一步建议进入 → spec
+- 不要在用户确认前自动继续执行下一个步骤
+
+## DESIGN.md 格式规范
+
+DESIGN.md 由两层组成：
+- **YAML 前置数据**（`---` 包裹）：机器可读的 design token，包含精确数值
+- **Markdown 正文**：人类可读的设计理由，说明 token 背后的逻辑
+
+### YAML Schema
+```yaml
+version: alpha          # 可选
+name: <项目名>
+description: <项目描述>  # 可选
+colors:
+  <token-name>: "#hex"
+typography:
+  <token-name>:
+    fontFamily: <string>
+    fontSize: <px/rem>
+    fontWeight: <number>
+    lineHeight: <px/rem/number>
+    letterSpacing: <Dimension>   # 可选
+    fontFeature: <string>        # 可选，对应 font-feature-settings
+    fontVariation: <string>      # 可选，对应 font-variation-settings
+rounded:
+  <scale>: <px/rem>
+spacing:
+  <scale>: <px/rem>
+components:
+  <component-name>:
+    backgroundColor: <Color 或 {token.path}>
+    textColor: <Color 或 {token.path}>
+    typography: <{token.path}>
+    rounded: <{token.path}>
+    padding: <Dimension>
+```
+
+### Token 引用语法
+用 `{path.to.token}` 引用已定义的 token，例如 `{colors.primary}`、`{typography.label-md}`
+
+引用必须指向具体的 primitive 值，不能引用整个分组。例外：在 `components` 中可以引用 typography 复合值。
+
+### 推荐 Token 命名（非强制）
+- **Colors**：`primary`、`secondary`、`tertiary`、`neutral`、`surface`、`on-surface`、`error`
+- **Typography**：`headline-display`、`headline-lg`、`headline-md`、`body-lg`、`body-md`、`body-sm`、`label-lg`、`label-md`、`label-sm`
+- **Rounded**：`none`、`sm`、`md`、`lg`、`xl`、`full`
+
+### 组件变体命名
+同一组件的不同状态用后缀区分：`button-primary`、`button-primary-hover`、`button-primary-active`
+
+### Markdown 正文章节顺序
+Overview → Colors → Typography → Layout → Elevation & Depth → Shapes → Components → Do's and Don'ts
+
+## 职责
+
+按照 DESIGN.md 格式规范生成文件：
+
+1. **Overview（品牌气质）**：产品整体风格、目标用户与品牌个性、不希望出现的风格
+2. **Colors（色彩系统）**：
+   每个颜色必须说明：
+   - 颜色名称和数值（如 `primary: #855300`）
+   - **使用场景**：什么时候用这个颜色（主操作按钮、选中态、链接等）
+   - **禁用场景**：不能用在哪里（如"primary 不用于背景或装饰性元素"）
+   
+   示例写法：
+   ```markdown
+   - **Primary (#855300):** 用于所有主操作按钮、选中态、高优先级通知。不用于背景或大面积填充。
+   - **Secondary (#0058be):** 用于次要信息、导航辅助、信任标识。不用于主操作。
+   ```
+3. **Typography（字体系统）**：字体族、标题/正文/辅助文字字号、字重规则、行高规则
+4. **Layout（布局与间距）**：页面边距、卡片内边距、模块间距、栅格规则、内容最大宽度
+5. **Elevation & Depth（阴影层级）**：卡片、弹窗、浮层的阴影规则
+6. **Shapes（圆角）**：卡片、按钮、输入框、弹窗圆角
+7. **Components（组件规则）**：
+   每个组件**必须包含以下属性**：
+   - `backgroundColor`：背景色（引用 colors token）
+   - `textColor`：文字色（引用 colors token）
+   - `typography`：**必须显式绑定**（引用 typography token，如 `{typography.label-md}`）
+   - `rounded`：圆角（引用 rounded token）
+   - `padding`：内边距（引用 spacing token 或直接写数值）
+   
+   **组件覆盖范围（至少包含）**：
+   - `button-primary` / `button-primary-hover`
+   - `button-secondary` / `button-secondary-hover`
+   - `input-field`
+   - `card`（项目核心容器组件）
+   
+   **变体命名规则**：
+   - hover/active/disabled 变体必须作为独立条目（如 `button-primary-hover`），不能嵌套
+8. **Do's and Don'ts（设计规范）**：
+   **必须成对出现**，每条 Don't 必须伴随对应的 Do，告诉 AI 正确做法。
+   
+   格式要求：
+   ```markdown
+   ❌ **Don't**: 不要直接在代码中写 `color: #3B82F6`
+   ✅ **Do**: 使用 semantic token：`color: var(--color-action-primary)`
+   
+   ❌ **Don't**: 不要为每个按钮单独定义样式
+   ✅ **Do**: 引用 `components.button-primary` token，保持一致性
+   
+   ❌ **Don't**: 加载态时显示空白页面
+   ✅ **Do**: 使用骨架屏（Skeleton），提升感知性能
+   ```
+
+## 验证
+```bash
+npx @google/design.md lint DESIGN.md
+npx @google/design.md diff DESIGN.md DESIGN.md.bak
+npx @google/design.md export --format css-tailwind DESIGN.md
+```
+
+## 上下游关系
+- 输出：DESIGN.md，供 spec、handoff、implement 使用
+- 下游：→ spec（优先进入）
